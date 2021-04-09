@@ -6,4 +6,4 @@
 How to run
 gradle build
 
-gradle run --args  /Users/santoshjoshi/cloud-inventory/src/main/resources/tenant.json
+gradle run --args  ~/cloud-inventory/src/main/resources/tenant.json
