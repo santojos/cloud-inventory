@@ -1,0 +1,15 @@
+[
+  {
+    "tenantId": "ocid.12345",
+    "clouds": [
+      "OCI"
+    ]
+  },
+  {
+    "tenantId": "ocid.12345",
+    "clouds": [
+      "AWS",
+      "OCI"
+    ]
+  }
+]
