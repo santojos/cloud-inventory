@@ -20,7 +20,7 @@ private val logger = KotlinLogging.logger {}
  * <li>Public IP addresses assigned to any secondary private IP on the VNIC</li>
  * </ul>
  */
-class InstancePublicIp @Inject constructor(
+class InstancePublicIP @Inject constructor(
     @Named("OciComputeClient") val computeClient: ComputeClient,
     @Named("OciVirtualNetworkClient") val vcnClient: VirtualNetworkClient
 ) {

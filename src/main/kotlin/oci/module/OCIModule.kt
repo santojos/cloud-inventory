@@ -4,6 +4,8 @@ import auth.oci.OCIAuthProvider
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.VirtualNetworkClient
+import com.oracle.bmc.loadbalancer.LoadBalancer
+import com.oracle.bmc.loadbalancer.LoadBalancerClient
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -22,6 +24,11 @@ class OCIModule {
     @Singleton
     @Named("OciVirtualNetworkClient")
     fun providesVirtualNetworkClient(provider: AuthenticationDetailsProvider): VirtualNetworkClient = VirtualNetworkClient(provider)
+
+    @Provides
+    @Singleton
+    @Named("OciLoadBalancerClient")
+    fun providesLoadBalancerClient(provider: AuthenticationDetailsProvider): LoadBalancerClient = LoadBalancerClient(provider)
 
     @Provides
     @Singleton

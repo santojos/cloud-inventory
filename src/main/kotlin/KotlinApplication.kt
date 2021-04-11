@@ -35,8 +35,13 @@ class KotlinApplication {
             val tenantConfigList = gson.fromJson<List<TenantConfig>>(tenantConfigString, listType)
 
             tenantConfigList.forEach {
+
+                val publicIPSet = HashSet<PublicIPDetails>()
                 logger.info("Tenant config is ${it.tenantId} : ${it.compartmentId} :  ${it.provider}")
-                val publicIPSet = ociComponent.instancePublicIP().getPublicIP(it.compartmentId, it.regions)
+                publicIPSet.addAll(ociComponent.instancePublicIP().getPublicIP(it.compartmentId, it.regions))
+                publicIPSet.addAll(ociComponent.loadbalancerPublicIP().getPublicIP(it.compartmentId, it.regions))
+
+
                 logger.info { "--------------------------------------------------------------------------------" }
                 if (publicIPSet.isNotEmpty()) {
                     logger.info("Public IP Details for compartment ${it.compartmentId} are :: ")
