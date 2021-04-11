@@ -19,7 +19,7 @@ private val logger = KotlinLogging.logger {}
  */
 class LoadBalancerPublicIP @Inject constructor(
     @Named("OciLoadBalancerClient") val loadBalancerClient: LoadBalancerClient
-) {
+) : PublicIP {
 
     /*
     List instances in a compartment
@@ -79,7 +79,7 @@ class LoadBalancerPublicIP @Inject constructor(
     /**
      * prints list of public Ips with tenancy
      */
-    fun getPublicIP(compartmentId: String, regions: List<String>): Set<PublicIPDetails> {
+    override fun fetchPublicIP(compartmentId: String, regions: List<String>): Set<PublicIPDetails> {
         var publicIps = HashSet<PublicIPDetails>()
 
         regions.forEach {
@@ -88,7 +88,5 @@ class LoadBalancerPublicIP @Inject constructor(
         }
         return publicIps
     }
-
-
 }
 

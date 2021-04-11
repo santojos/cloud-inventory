@@ -23,7 +23,7 @@ private val logger = KotlinLogging.logger {}
 class InstancePublicIP @Inject constructor(
     @Named("OciComputeClient") val computeClient: ComputeClient,
     @Named("OciVirtualNetworkClient") val vcnClient: VirtualNetworkClient
-) {
+) : PublicIP {
 
     /*
     List instances in a compartment
@@ -144,7 +144,8 @@ class InstancePublicIP @Inject constructor(
     /**
      * prints list of public Ips with tenancy
      */
-    fun getPublicIP(compartmentId: String, regions: List<String>): Set<PublicIPDetails> {
+
+    override fun fetchPublicIP(compartmentId: String, regions: List<String>) : Set<PublicIPDetails> {
         var publicIps = HashSet<PublicIPDetails>()
 
         regions.forEach {

@@ -38,8 +38,8 @@ class KotlinApplication {
 
                 val publicIPSet = HashSet<PublicIPDetails>()
                 logger.info("Tenant config is ${it.tenantId} : ${it.compartmentId} :  ${it.provider}")
-                publicIPSet.addAll(ociComponent.instancePublicIP().getPublicIP(it.compartmentId, it.regions))
-                publicIPSet.addAll(ociComponent.loadbalancerPublicIP().getPublicIP(it.compartmentId, it.regions))
+                publicIPSet.addAll(ociComponent.instancePublicIP().fetchPublicIP(it.compartmentId, it.regions))
+                publicIPSet.addAll(ociComponent.loadbalancerPublicIP().fetchPublicIP(it.compartmentId, it.regions))
 
 
                 logger.info { "--------------------------------------------------------------------------------" }
