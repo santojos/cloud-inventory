@@ -10,4 +10,5 @@
 Update tenant.json with compartment and tenant info 
 
 gradle build
+
 gradle run --args  ~/cloud-inventory/src/main/resources/tenant.json
