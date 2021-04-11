@@ -14,6 +14,12 @@ import javax.inject.Named
 
 private val logger = KotlinLogging.logger {}
 
+/*
+* <ul>
+ * <li>A public IP address directly on the VNIC</li>
+ * <li>Public IP addresses assigned to any secondary private IP on the VNIC</li>
+ * </ul>
+ */
 class InstancePublicIp @Inject constructor(
     @Named("OciComputeClient") val computeClient: ComputeClient,
     @Named("OciVirtualNetworkClient") val vcnClient: VirtualNetworkClient

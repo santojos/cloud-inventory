@@ -37,8 +37,14 @@ class KotlinApplication {
             tenantConfigList.forEach {
                 logger.info("Tenant config is ${it.tenantId} : ${it.compartmentId} :  ${it.provider}")
                 val publicIPSet = ociComponent.instancePublicIP().getPublicIP(it.compartmentId, it.regions)
-                logger.info("Public IP Details for compartment ${it.compartmentId} are :: ")
-                publicIPSet.forEach { logger.info { it } }
+                logger.info { "--------------------------------------------------------------------------------" }
+                if (publicIPSet.isNotEmpty()) {
+                    logger.info("Public IP Details for compartment ${it.compartmentId} are :: ")
+                    publicIPSet.forEach { logger.info { it } }
+                } else {
+                    logger.info { "No Public Ip in tenency ${it.tenantId}" }
+                }
+                logger.info { "--------------------------------------------------------------------------------" }
             }
         }
     }

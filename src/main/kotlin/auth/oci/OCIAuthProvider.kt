@@ -11,7 +11,7 @@ private val logger = KotlinLogging.logger {}
 class OCIAuthProvider {
 
     private var configFilePath = "~/.oci/config"
-    private var profile = "DEFAULT"
+    private var profile = "EXPLORE"
 
     /**
      * Using Config file Provider at present
