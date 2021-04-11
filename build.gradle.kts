@@ -7,7 +7,7 @@ plugins {
     application
 }
 
-group = "me.santoshjoshi"
+group = "me.santojos"
 version = "1.0-SNAPSHOT"
 
 configure<ApplicationPluginConvention> {
