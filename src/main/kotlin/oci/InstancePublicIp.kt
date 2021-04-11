@@ -22,7 +22,7 @@ class InstancePublicIp @Inject constructor(
     /*
     List instances in a compartment
     */
-    private fun getInstances(compartmentId: String): List<Instance> {
+    private fun getInstances(compartmentId: String, region: String): List<Instance> {
 
         logger.info { "Getting instances for compartment with id $compartmentId" }
         val instances = ArrayList<Instance>()
@@ -31,6 +31,7 @@ class InstancePublicIp @Inject constructor(
             .limit(100)
             .build()
 
+        computeClient.setRegion(region)
         computeClient.paginators.listInstancesResponseIterator(listInstancesRequest)
             .forEach { instances.addAll(it.items) }
         logger.info { "Got ${instances.size} instance in compartment $compartmentId" }
@@ -40,7 +41,11 @@ class InstancePublicIp @Inject constructor(
     /**
      * List all Vnic Attachments for all instances in a compartment
      */
-    private fun getVnicAttachment(compartmentId: String, instances: List<Instance>): List<VnicAttachment> {
+    private fun getVnicAttachment(
+        compartmentId: String,
+        region: String,
+        instances: List<Instance>
+    ): List<VnicAttachment> {
 
         logger.info { "Getting vnic for ${instances.size} instances in compartment : $compartmentId" }
 
@@ -53,6 +58,7 @@ class InstancePublicIp @Inject constructor(
                 .limit(100)
                 .build()
 
+            computeClient.setRegion(region)
             computeClient.paginators.listVnicAttachmentsResponseIterator(listVnicAttachmentsRequest)
                 .forEach { vnicAttachments.addAll(it.items) }
         }
@@ -65,7 +71,7 @@ class InstancePublicIp @Inject constructor(
     /**
      * Get Public Ips associated with Vnic attachments
      */
-    private fun getPublicIps(vnicAttachments: List<VnicAttachment>): Set<PublicIPDetails> {
+    private fun getPublicIps(vnicAttachments: List<VnicAttachment>, region: String): Set<PublicIPDetails> {
 
         /*
     * Handles the scenario where public IP addresses are assigned to
@@ -79,6 +85,7 @@ class InstancePublicIp @Inject constructor(
         vnicAttachments.forEach {
             val vnicAttachment = it
             logger.info { "Getting Public IP for vnic with id ${it.id}" }
+            vcnClient.setRegion(region)
             val getVnicResponsea = vcnClient.getVnic(GetVnicRequest.builder().vnicId(it.vnicId).build())
 
             if (getVnicResponsea.vnic.publicIp != null) {
@@ -87,7 +94,8 @@ class InstancePublicIp @Inject constructor(
                     vnicAttachment.instanceId,
                     it.vnicId,
                     "NA",
-                    getVnicResponsea.vnic.publicIp)
+                    getVnicResponsea.vnic.publicIp,
+                    region)
 
                 publicIps.add(publicIPDetails)
 
@@ -111,7 +119,7 @@ class InstancePublicIp @Inject constructor(
                         vnicAttachment.instanceId,
                         it.vnicId,
                         it.ipAddress,
-                        getPublicIpResponse.publicIp.ipAddress)
+                        getPublicIpResponse.publicIp.ipAddress, region)
 
                     publicIps.add(publicIPDetails)
                 } catch (ex: BmcException) {
@@ -130,8 +138,16 @@ class InstancePublicIp @Inject constructor(
     /**
      * prints list of public Ips with tenancy
      */
-    fun getPublicIP(compartmentId: String) =
-        getPublicIps(getVnicAttachment(compartmentId, getInstances(compartmentId)))
+    fun getPublicIP(compartmentId: String, regions: List<String>): Set<PublicIPDetails> {
+        var publicIps = HashSet<PublicIPDetails>()
+
+        regions.forEach {
+            val publicIpSet = getPublicIps(getVnicAttachment(compartmentId, it, getInstances(compartmentId, it)), it)
+            publicIps.addAll(publicIpSet)
+        }
+        return publicIps
+    }
+
 
 }
 

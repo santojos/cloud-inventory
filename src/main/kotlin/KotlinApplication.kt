@@ -26,7 +26,7 @@ class KotlinApplication {
             val ociComponent = main.getOciComponent()
 
             val path = Paths.get(args.get(0))
-            logger.info {"file is ${path.toFile().name}"}
+            logger.info { "file is ${path.toFile().name}" }
             val bufferedReader: BufferedReader = path.toFile().bufferedReader()
             val tenantConfigString = bufferedReader.readText()
 
@@ -36,8 +36,8 @@ class KotlinApplication {
 
             tenantConfigList.forEach {
                 logger.info("Tenant config is ${it.tenantId} : ${it.compartmentId} :  ${it.provider}")
-                val publicIPSet = ociComponent.instancePublicIP().getPublicIP(it.compartmentId)
-                logger.info ( "Public IP Details for compartment ${it.compartmentId} are :: " )
+                val publicIPSet = ociComponent.instancePublicIP().getPublicIP(it.compartmentId, it.regions)
+                logger.info("Public IP Details for compartment ${it.compartmentId} are :: ")
                 publicIPSet.forEach { logger.info { it } }
             }
         }

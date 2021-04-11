@@ -16,20 +16,12 @@ class OCIModule {
     @Provides
     @Singleton
     @Named("OciComputeClient")
-    fun providesComputeClient(provider: AuthenticationDetailsProvider): ComputeClient {
-        val computeClient = ComputeClient(provider)
-        computeClient.setRegion("us-ashburn-1")
-        return computeClient
-    }
+    fun providesComputeClient(provider: AuthenticationDetailsProvider): ComputeClient = ComputeClient(provider)
 
     @Provides
     @Singleton
     @Named("OciVirtualNetworkClient")
-    fun providesVirtualNetworkClient(provider: AuthenticationDetailsProvider): VirtualNetworkClient {
-        val virtualNetworkClient = VirtualNetworkClient(provider)
-        virtualNetworkClient.setRegion("us-ashburn-1")
-        return virtualNetworkClient;
-    }
+    fun providesVirtualNetworkClient(provider: AuthenticationDetailsProvider): VirtualNetworkClient = VirtualNetworkClient(provider)
 
     @Provides
     @Singleton

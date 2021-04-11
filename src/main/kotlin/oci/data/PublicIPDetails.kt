@@ -5,5 +5,6 @@ data class PublicIPDetails(
     val instanceId: String,
     val vnicId: String,
     val privateIP: String,
-    val publicIP: String
+    val publicIP: String,
+    val region: String
 )

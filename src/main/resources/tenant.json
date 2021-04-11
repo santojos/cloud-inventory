@@ -2,6 +2,7 @@
   {
     "tenantId" : "tenantOCID",
     "compartmentId": "compartmentOCID",
+    "regions": ["us-ashburn-1", "us-phoenix-1" , "eu-frankfurt-1"],
     "provider": "OCI"
   }
 ]
