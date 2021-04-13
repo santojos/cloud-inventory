@@ -44,7 +44,7 @@ class LoadBalancerPublicIP @Inject constructor(
     /**
      * Get Public Ips associated with Vnic attachments
      */
-    private fun getPublicIps(loadbalancers: List<LoadBalancer>, region: String): Set<PublicIPDetails> {
+    private fun getPublicIps(loadbalancers: List<LoadBalancer>, region: String): Map<String, PublicIPDetails> {
 
         /*
     * Handles the scenario where public IP addresses are assigned to
@@ -53,7 +53,7 @@ class LoadBalancerPublicIP @Inject constructor(
     * public IP (if any) which has been associated with the private IP
     */
 
-        var publicIps = HashSet<PublicIPDetails>()
+        var publicIps = HashMap<String, PublicIPDetails>()
 
         loadbalancers.forEach {
             val loadBalancer = it
@@ -62,13 +62,14 @@ class LoadBalancerPublicIP @Inject constructor(
                  if(ipAddress.isPublic){
 
                      val publicIPDetails = PublicIPDetails(it.compartmentId,
+                         it.displayName,
                          loadBalancer.id,
                          "NA",
                          "NA",
                          ipAddress.ipAddress,
-                         region)
+                         region,"LoadBalancer")
 
-                     publicIps.add(publicIPDetails)
+                     publicIps.put(ipAddress.ipAddress, publicIPDetails)
                  }
              })
         }
@@ -79,12 +80,12 @@ class LoadBalancerPublicIP @Inject constructor(
     /**
      * prints list of public Ips with tenancy
      */
-    override fun fetchPublicIP(compartmentId: String, regions: List<String>): Set<PublicIPDetails> {
-        var publicIps = HashSet<PublicIPDetails>()
+    override fun fetchPublicIP(compartmentId: String, regions: List<String>): Map<String, PublicIPDetails> {
+        var publicIps = HashMap<String, PublicIPDetails>()
 
         regions.forEach {
-            val publicIpSet = getPublicIps(getLoadBalancer(compartmentId, it), it)
-            publicIps.addAll(publicIpSet)
+            val publicIpMap = getPublicIps(getLoadBalancer(compartmentId, it), it)
+            publicIps.putAll(publicIpMap)
         }
         return publicIps
     }

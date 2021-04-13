@@ -77,7 +77,7 @@ class InstancePublicIP @Inject constructor(
     /**
      * Get Public Ips associated with Vnic attachments
      */
-    private fun getPublicIps(vnicAttachments: List<VnicAttachment>, region: String): Set<PublicIPDetails> {
+    private fun getPublicIps(vnicAttachments: List<VnicAttachment>, region: String): Map<String, PublicIPDetails> {
 
         /*
     * Handles the scenario where public IP addresses are assigned to
@@ -86,7 +86,7 @@ class InstancePublicIP @Inject constructor(
     * public IP (if any) which has been associated with the private IP
     */
 
-        var publicIps = HashSet<PublicIPDetails>()
+        var publicIps = HashMap<String, PublicIPDetails>()
 
         vnicAttachments.forEach {
             val vnicAttachment = it
@@ -97,13 +97,14 @@ class InstancePublicIP @Inject constructor(
             if (getVnicResponsea.vnic.publicIp != null) {
 
                 val publicIPDetails = PublicIPDetails(it.compartmentId,
+                    it.displayName ?: "NA"  ,
                     vnicAttachment.instanceId,
                     it.vnicId,
                     "NA",
                     getVnicResponsea.vnic.publicIp,
-                    region)
+                    region,"Instance")
 
-                publicIps.add(publicIPDetails)
+                publicIps.put(getVnicResponsea.vnic.publicIp, publicIPDetails)
 
             }
 
@@ -122,12 +123,13 @@ class InstancePublicIP @Inject constructor(
 
 
                     val publicIPDetails = PublicIPDetails(it.compartmentId,
+                        it.displayName,
                         vnicAttachment.instanceId,
                         it.vnicId,
                         it.ipAddress,
-                        getPublicIpResponse.publicIp.ipAddress, region)
+                        getPublicIpResponse.publicIp.ipAddress, region, "Instance")
 
-                    publicIps.add(publicIPDetails)
+                    publicIps.put(getVnicResponsea.vnic.publicIp, publicIPDetails)
                 } catch (ex: BmcException) {
                     if (ex.getStatusCode() == 404) {
                         //ignoring it as private IP address does not have a public IP
@@ -145,12 +147,12 @@ class InstancePublicIP @Inject constructor(
      * prints list of public Ips with tenancy
      */
 
-    override fun fetchPublicIP(compartmentId: String, regions: List<String>) : Set<PublicIPDetails> {
-        var publicIps = HashSet<PublicIPDetails>()
+    override fun fetchPublicIP(compartmentId: String, regions: List<String>) : Map<String, PublicIPDetails> {
+        var publicIps = HashMap<String, PublicIPDetails>()
 
         regions.forEach {
-            val publicIpSet = getPublicIps(getVnicAttachment(compartmentId, it, getInstances(compartmentId, it)), it)
-            publicIps.addAll(publicIpSet)
+            val publicIpMap = getPublicIps(getVnicAttachment(compartmentId, it, getInstances(compartmentId, it)), it)
+            publicIps.putAll(publicIpMap)
         }
         return publicIps
     }

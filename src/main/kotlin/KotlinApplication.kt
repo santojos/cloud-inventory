@@ -36,18 +36,18 @@ class KotlinApplication {
 
             tenantConfigList.forEach {
 
-                val publicIPSet = HashSet<PublicIPDetails>()
+                val publicIPSet = HashMap<String, PublicIPDetails>()
                 logger.info("Tenant config is ${it.tenantId} : ${it.compartmentId} :  ${it.provider}")
-                publicIPSet.addAll(ociComponent.instancePublicIP().fetchPublicIP(it.compartmentId, it.regions))
-                publicIPSet.addAll(ociComponent.loadbalancerPublicIP().fetchPublicIP(it.compartmentId, it.regions))
+                publicIPSet.putAll(ociComponent.instancePublicIP().fetchPublicIP(it.compartmentId, it.regions))
+                publicIPSet.putAll(ociComponent.loadbalancerPublicIP().fetchPublicIP(it.compartmentId, it.regions))
 
 
                 logger.info { "--------------------------------------------------------------------------------" }
                 if (publicIPSet.isNotEmpty()) {
                     logger.info("Public IP Details for compartment ${it.compartmentId} are :: ")
-                    publicIPSet.forEach { logger.info { it } }
+                    publicIPSet.forEach { logger.info {  "${it.value.region} -- ${it.value.type} -- ${it.value.displayname} -- ${it.key}" } }
                 } else {
-                    logger.info { "No Public Ip in tenency ${it.tenantId}" }
+                    logger.info { "No Public Ip in tenancy ${it.tenantId}" }
                 }
                 logger.info { "--------------------------------------------------------------------------------" }
             }
